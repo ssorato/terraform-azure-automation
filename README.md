@@ -1,2 +1,3 @@
-# terraform-azure-automation
+# Azure automation
+
 Sample automation to start/stop VMs at scheduled time
