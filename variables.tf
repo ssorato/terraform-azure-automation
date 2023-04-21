@@ -6,19 +6,19 @@ variable "location" {
 
 variable "rg_name" {
   type = string
-  description = "Azure Region"
+  description = "Azure Resource Group name"
   default = "rg-sandbox-devops"
 }
 
 variable "vnet_name" {
   type = string
-  description = "Azure Region"
+  description = "Azure Vnet name"
   default = "vnet-sandbox-devops"
 }
 
 variable "subnet_name" {
   type = string
-  description = "Azure Region"
+  description = "Azure subnet name"
   default = "subnet-sandbox-devops"
 }
 
