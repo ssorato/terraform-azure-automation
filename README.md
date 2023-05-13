@@ -24,6 +24,8 @@ RG-SANDBOX-DEVOPS
 > $AzureVM = 'sboxvm'
 
 > Invoke-AzVMRunCommand -ResourceGroupName $AzureRG -Name $AzureVM -CommandId 'RunShellScript' -Scripts '/usr/bin/echo 123 > /tmp/from_azure_automation.txt'
+
+> Disconnect-AzAccount
 ```
 
 On _sboxvm_ VM check the file `/tmp/from_azure_automation.txt`
