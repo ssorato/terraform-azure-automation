@@ -5,7 +5,13 @@ Param
 	$vmlist="All", 
 	[Parameter(Mandatory=$true)][ValidateSet("Start","Stop")] 
 	[String] 
-	$action 
+	$action,
+	[Parameter(Mandatory=$false)]
+	[String]
+	$startscript=$null,
+	[Parameter(Mandatory=$false)]
+	[String]
+	$stopscript=$null
 ) 
 
 # Ensures you do not inherit an AzContext in your runbook
@@ -17,7 +23,7 @@ $AzureContext = (Connect-AzAccount -Identity).context
 # Set and store context
 $AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -DefaultProfile $AzureContext
 
-if($vmlist -ne "All") 
+if ($vmlist.ToLower() -ne "all") 
 { 
 	$AzureVMs = $vmlist.Split(",") 
 	[System.Collections.ArrayList]$AzureVMsToHandle = $AzureVMs 
@@ -29,27 +35,41 @@ else
 
 } 
 
-foreach($AzureVM in $AzureVMsToHandle) 
+foreach ($AzureVM in $AzureVMsToHandle) 
 { 
 	if(!(Get-AzVM | ? {$_.Name -eq $AzureVM})) 
 	{ 
-		throw " AzureVM : [$AzureVM] - Does not exist! - Check your inputs " 
+		throw "Azure VM '$AzureVM' does not exist! - Check your inputs " 
 	} 
 } 
 
-if($action -eq "Stop") 
+if ($action.ToLower() -eq "stop") 
 { 
-	Write-Output "Stopping VMs"; 
 	foreach ($AzureVM in $AzureVMsToHandle) 
 	{ 
-		Get-AzVM | ? {$_.Name -eq $AzureVM} | Stop-AzVM -Force 
+		$AzureRG = (Get-AzVM | ? {$_.Name -eq 'sboxvm'}).ResourceGroupName
+		Write-Output "Stopping VM $AzureVM"; 
+		if ($stopscript)
+		{
+			Invoke-AzVMRunCommand -ResourceGroupName $AzureRG -Name $AzureVM -CommandId 'RunShellScript' -Scripts $stopscript
+		}
+		Stop-AzVM -ResourceGroupName $AzureRG -Name $AzureVM -Confirm:$false -Force
 	} 
 } 
-else 
+elseif ($action.ToLower() -eq "start")
 { 
-	Write-Output "Starting VMs"; 
 	foreach ($AzureVM in $AzureVMsToHandle) 
-	{ 
-		Get-AzVM | ? {$_.Name -eq $AzureVM} | Start-AzVM
+	{
+		$AzureRG = (Get-AzVM | ? {$_.Name -eq 'sboxvm'}).ResourceGroupName
+		Write-Output "Starting VM $AzureVM"; 
+		if ($startscript)
+		{
+			Invoke-AzVMRunCommand -ResourceGroupName $AzureRG -Name $AzureVM -CommandId 'RunShellScript' -Scripts $startscript
+		}
+		Start-AzVM -ResourceGroupName $AzureRG -Name $AzureVM -Confirm:$false
 	} 
+}
+else 
+{
+	throw "Action '$action' does not exist! - Check your inputs " 
 }

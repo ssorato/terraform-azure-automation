@@ -83,8 +83,9 @@ resource "azurerm_automation_job_schedule" "start_vm_sched" {
     azurerm_automation_schedule.start_vm
   ]
   parameters = {
-    vmlist         = "${var.vm_name}"
-    action         = "Start"
+    vmlist      = "${var.vm_name}"
+    action      = "Start"
+    startscript = "/usr/bin/date > /tmp/start_azure_automation.txt"
   }
 }
 
@@ -97,7 +98,8 @@ resource "azurerm_automation_job_schedule" "stop_vm_sched" {
     azurerm_automation_schedule.stop_vm
   ]
   parameters = {
-    vmlist         = "${var.vm_name}"
-    action         = "Stop"
+    vmlist     = "${var.vm_name}"
+    action     = "Stop"
+    stopscript = "/usr/bin/date > /tmp/stop_azure_automation.txt"
   }
 }
