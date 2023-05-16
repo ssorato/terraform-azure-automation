@@ -47,7 +47,7 @@ if ($action.ToLower() -eq "stop")
 { 
 	foreach ($AzureVM in $AzureVMsToHandle) 
 	{ 
-		$AzureRG = (Get-AzVM | ? {$_.Name -eq 'sboxvm'}).ResourceGroupName
+		$AzureRG = (Get-AzVM | ? {$_.Name -eq $azureVM}).ResourceGroupName
 		Write-Output "Stopping VM $AzureVM"; 
 		if ($stopscript)
 		{
@@ -60,7 +60,7 @@ elseif ($action.ToLower() -eq "start")
 { 
 	foreach ($AzureVM in $AzureVMsToHandle) 
 	{
-		$AzureRG = (Get-AzVM | ? {$_.Name -eq 'sboxvm'}).ResourceGroupName
+		$AzureRG = (Get-AzVM | ? {$_.Name -eq $azureVM}).ResourceGroupName
 		Write-Output "Starting VM $AzureVM"; 
 		if ($startscript)
 		{
